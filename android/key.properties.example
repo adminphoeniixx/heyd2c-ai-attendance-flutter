@@ -1,0 +1,12 @@
+# Copy this file to android/key.properties and fill in your keystore details.
+# NEVER commit key.properties to git — it contains sensitive credentials.
+#
+# How to generate a keystore:
+#   keytool -genkey -v -keystore pulsara_release.jks \
+#           -storetype JKS -keyalg RSA -keysize 2048 \
+#           -validity 10000 -alias pulsara
+#
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=pulsara
+storeFile=../pulsara_release.jks

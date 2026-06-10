@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(flutter pub *)",
+      "Bash(flutter build *)"
+    ]
+  }
+}
