@@ -39,6 +39,14 @@ class AuthRepository {
     appLogger.i('Auth: logged out');
   }
 
+  /// Permanently deletes the account on the server, then wipes all local
+  /// data — the token and any cached employees/logs are no longer valid.
+  Future<void> deleteAccount() async {
+    await _api.deleteAccount();
+    await _db.nukeAll();
+    appLogger.i('Auth: account deleted');
+  }
+
   String get companyName =>
       _db.getSetting(StorageKeys.companyName) ?? '';
 }

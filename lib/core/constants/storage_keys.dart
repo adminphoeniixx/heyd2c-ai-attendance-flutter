@@ -1,4 +1,5 @@
 abstract class StorageKeys {
+
   // Hive box names
   static const employeeBox    = 'employees';
   static const attendanceBox  = 'attendance_logs';
@@ -14,4 +15,5 @@ abstract class StorageKeys {
   static const adminPhone     = 'admin_phone';
   static const employeeCache  = 'employee_list_json';
   static const lastSyncAt     = 'last_sync_at';
+  
 }

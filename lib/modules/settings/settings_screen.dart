@@ -161,6 +161,26 @@ class SettingsScreen extends StatelessWidget {
                       onConfirm: c.logout),
                 )),
           ),
+          const SizedBox(height: 22),
+
+          // ── Danger zone ─────────────────────────────────────────────────────
+          const _SectionLabel('DANGER ZONE'),
+          VeloCard(
+            padding: EdgeInsets.zero,
+            borderColor: AppColors.rose.withValues(alpha: 0.30),
+            child: Obx(() => _IntRow(
+                  icon: Icons.no_accounts_rounded,
+                  iconBg: AppColors.rose.withValues(alpha: 0.12),
+                  iconColor: AppColors.rose,
+                  title: 'Delete Account',
+                  subtitle: 'Permanently erase this company account & all data',
+                  actionLabel: 'Delete',
+                  isDestructive: true,
+                  isLast: true,
+                  loading: c.isDeletingAccount.value,
+                  onTap: () => _confirmDeleteAccount(context, c),
+                )),
+          ),
           const SizedBox(height: 36),
 
           // ── App version ──────────────────────────────────────────────────────
@@ -207,6 +227,108 @@ class SettingsScreen extends StatelessWidget {
         ),
       ],
     ));
+  }
+
+  /// Delete Account requires the admin to type DELETE to confirm — this is
+  /// irreversible and wipes the whole company account, not just this device.
+  static void _confirmDeleteAccount(BuildContext context, SettingsController c) {
+    Get.dialog(_DeleteAccountDialog(onConfirmed: c.deleteAccount));
+  }
+}
+
+// ── Delete account dialog — type-to-confirm guard for an irreversible op ──────
+
+class _DeleteAccountDialog extends StatefulWidget {
+  final VoidCallback onConfirmed;
+  const _DeleteAccountDialog({required this.onConfirmed});
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  static const _keyword = 'DELETE';
+  final _controller = TextEditingController();
+  bool _canConfirm = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.bg2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Row(
+        children: [
+          const Icon(Icons.warning_rounded, color: AppColors.rose, size: 22),
+          const SizedBox(width: 8),
+          Text('Delete Account', style: AppTs.h3(color: AppColors.rose)),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'This permanently deletes your company account — every employee, '
+            'attendance record and registered face. This action cannot be undone.',
+            style: AppTs.body(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 16),
+          Text('Type $_keyword to confirm', style: AppTs.caption()),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            style: AppTs.body(),
+            decoration: InputDecoration(
+              hintText: _keyword,
+              hintStyle: AppTs.body(color: AppColors.textMuted),
+              filled: true,
+              fillColor: AppColors.surface,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: AppColors.rose),
+              ),
+            ),
+            onChanged: (v) =>
+                setState(() => _canConfirm = v.trim() == _keyword),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: _canConfirm
+              ? () {
+                  Get.back();
+                  widget.onConfirmed();
+                }
+              : null,
+          child: Text(
+            'Delete Permanently',
+            style: TextStyle(
+              color: _canConfirm ? AppColors.rose : AppColors.textMuted,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

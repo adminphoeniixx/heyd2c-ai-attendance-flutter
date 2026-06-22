@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace   = "com.pulsara.pulsara_kiosk"
+    namespace   = "heyd2c.attendance.app"
     compileSdk  = flutter.compileSdkVersion
     ndkVersion  = "28.2.13676358"
 
@@ -28,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.pulsara.pulsara_kiosk"
+        applicationId = "heyd2c.attendance.app"
         // ML Kit + TFLite + camera2 all require API 21+
         minSdk = flutter.minSdkVersion
         targetSdk     = flutter.targetSdkVersion

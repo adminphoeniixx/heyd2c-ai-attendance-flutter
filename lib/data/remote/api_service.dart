@@ -27,6 +27,12 @@ class ApiService {
     return res.data!;
   }
 
+  // ── Account ───────────────────────────────────────────────────────────────
+
+  Future<void> deleteAccount() async {
+    await _client.delete<dynamic>(ApiConstants.deleteAccount);
+  }
+
   // ── Employees ─────────────────────────────────────────────────────────────
 
   Future<EmployeeModel> createEmployee({

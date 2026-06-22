@@ -17,6 +17,7 @@ class SettingsController extends GetxController {
   final lastSyncAt  = ''.obs;
   final isLoggingOut        = false.obs;
   final isSyncingEmployees  = false.obs;
+  final isDeletingAccount   = false.obs;
 
   @override
   void onInit() {
@@ -88,5 +89,47 @@ class SettingsController extends GetxController {
     } catch (e) {
       appLogger.e('Nuke error: $e');
     }
+  }
+
+  /// Permanently deletes the account on the server. Irreversible — wipes the
+  /// company's data and every employee/attendance record along with it.
+  Future<void> deleteAccount() async {
+    if (isDeletingAccount.value) return;
+    isDeletingAccount.value = true;
+    try {
+      await _authRepo.deleteAccount();
+      appLogger.i('Account deleted permanently');
+      Get.offAllNamed(AppRoutes.login);
+      Get.snackbar(
+        'Account Deleted',
+        'Your account and all associated data have been permanently removed.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 4),
+      );
+    } catch (e) {
+      appLogger.e('Delete account error: $e');
+      Get.snackbar(
+        'Delete Failed',
+        _parseDeleteError(e),
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isDeletingAccount.value = false;
+    }
+  }
+
+  String _parseDeleteError(dynamic e) {
+    final msg = e.toString();
+    if (msg.contains('401') || msg.contains('403')) {
+      return 'Session expired. Please log in again.';
+    }
+    if (msg.contains('404')) return 'Account not found.';
+    if (msg.contains('SocketException') ||
+        msg.contains('connection') ||
+        msg.contains('timeout')) {
+      return 'No internet connection. Please try again.';
+    }
+    return 'Something went wrong. Please try again.';
   }
 }

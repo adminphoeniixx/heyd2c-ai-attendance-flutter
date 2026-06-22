@@ -5,6 +5,10 @@ abstract class ApiConstants {
   static const sendOtp = '/send-otp';
   static const verifyOtp = '/verify-otp';
 
+  // Account — lives one level up from the kiosk-scoped base URL, so this is
+  // an absolute URL (Dio uses it as-is and skips baseUrl when path has a scheme).
+  static const deleteAccount = 'https://heyd2c.ai/api/v1/account';
+
   // Employees
   static const employees = '/employees';
   static const createEmployee = '/employees';
